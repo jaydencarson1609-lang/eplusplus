@@ -104,6 +104,25 @@ ALIASES: dict[str, str] = {
     "type": "type",
     "text": "text",
     "as": "as",
+    # websites
+    "start": "start",
+    "website": "website",
+    "save": "save",
+    "open": "open",
+    "heading": "heading",
+    "paragraph": "paragraph",
+    "button": "button",
+    "link": "link",
+    "input": "input",
+    "picture": "picture",
+    "background": "background",
+    "font": "font",
+    "page": "page",
+    "goes": "goes",
+    "that": "that",
+    "color": "color",
+    "divider": "divider",
+    "line": "divider",
 }
 
 CANONICAL_KEYWORDS = {
@@ -118,6 +137,8 @@ CANONICAL_KEYWORDS = {
     "floor", "ceiling", "round", "absolute", "remainder", "power", "smallest", "largest",
     "square", "root", "slice", "find", "replace", "split", "join", "trim", "starts", "ends",
     "copy", "remove", "sort", "reverse", "break", "type", "text", "as", "loop",
+    "start", "website", "save", "open", "heading", "paragraph", "button", "link", "input", "picture",
+    "background", "font", "page", "goes", "that", "color", "divider", "line",
     *ALIASES.keys(),
 }
 

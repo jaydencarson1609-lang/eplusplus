@@ -5,3 +5,5 @@ __pycache__/
 .env
 .venv/
 venv/
+my_website.html
+examples/my_website.html

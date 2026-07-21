@@ -44,6 +44,26 @@ class NodeKind(Enum):
     REMOVE = auto()
     SORT = auto()
     REVERSE = auto()
+    WEB_START = auto()
+    WEB_SET = auto()
+    WEB_ADD = auto()
+    WEB_SAVE = auto()
+    WEB_OPEN = auto()
+
+
+WEB_ELEMENTS = {
+    "heading",
+    "paragraph",
+    "text",
+    "button",
+    "link",
+    "image",
+    "picture",
+    "input",
+    "list",
+    "divider",
+    "line",
+}
 
 
 @dataclass
@@ -102,6 +122,20 @@ BLOCK_STARTERS = {
     "type",
     "text",
     "count",
+    "start",
+    "website",
+    "save",
+    "open",
+    "heading",
+    "paragraph",
+    "button",
+    "picture",
+    "background",
+    "font",
+    "page",
+    "goes",
+    "divider",
+    "line",
 }
 
 
@@ -183,7 +217,7 @@ class Parser:
             if kw == "clear":
                 return self.parse_clear()
             if kw == "add":
-                return self.parse_append()
+                return self.parse_add_statement()
             if kw == "remove":
                 return self.parse_remove()
             if kw == "sort":
@@ -199,9 +233,31 @@ class Parser:
             if kw == "let":
                 return self.parse_let_assign()
             if kw == "make":
+                if (
+                    self.pos + 1 < len(self.tokens)
+                    and self.tokens[self.pos + 1].type == TokenType.KEYWORD
+                    and self.tokens[self.pos + 1].value == "website"
+                ):
+                    self.advance()
+                    self.advance()
+                    title = self.parse_expression()
+                    return Node(NodeKind.WEB_START, value=title, line=line)
                 return self.parse_make_assign()
             if kw == "set":
+                nxt = self.tokens[self.pos + 1] if self.pos + 1 < len(self.tokens) else None
+                if (
+                    nxt
+                    and nxt.type == TokenType.KEYWORD
+                    and nxt.value in {"background", "page", "text", "font"}
+                ):
+                    return self.parse_web_set()
                 return self.parse_set_assign()
+            if kw == "start":
+                return self.parse_web_start()
+            if kw == "save":
+                return self.parse_web_save()
+            if kw == "open":
+                return self.parse_web_open()
             if kw == "note":
                 self.skip_note()
                 return Node(NodeKind.NOOP, line=line)
@@ -511,7 +567,127 @@ class Parser:
         self.expect_keyword("screen")
         return Node(NodeKind.CLEAR, line=line)
 
-    def parse_append(self) -> Node:
+    def parse_add_statement(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("add")
+        if self.current().type == TokenType.KEYWORD and self.current().value in WEB_ELEMENTS:
+            return self.parse_web_add_from_kind(line)
+        if self.current().type == TokenType.IDENT and self.current().value.lower() == "list":
+            self.advance()
+            return self.parse_web_add_list(line)
+        item = self.parse_value()
+        self.expect_keyword("to")
+        target = self._expect_ident()
+        return Node(NodeKind.APPEND, value={"target": target, "item": item}, line=line)
+
+    def parse_web_start(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("start")
+        self.expect_keyword("website")
+        title = self.parse_expression()
+        return Node(NodeKind.WEB_START, value=title, line=line)
+
+    def parse_web_set(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("set")
+        if self.match_keyword("page"):
+            if self.match_keyword("background"):
+                self.expect_keyword("to")
+                return Node(NodeKind.WEB_SET, value={"key": "background", "expr": self.parse_expression()}, line=line)
+            if self.match_keyword("color"):
+                self.expect_keyword("to")
+                return Node(NodeKind.WEB_SET, value={"key": "text_color", "expr": self.parse_expression()}, line=line)
+        if self.match_keyword("background"):
+            self.expect_keyword("to")
+            return Node(NodeKind.WEB_SET, value={"key": "background", "expr": self.parse_expression()}, line=line)
+        if self.match_keyword("text"):
+            self.expect_keyword("color")
+            self.expect_keyword("to")
+            return Node(NodeKind.WEB_SET, value={"key": "text_color", "expr": self.parse_expression()}, line=line)
+        if self.match_keyword("font"):
+            self.expect_keyword("to")
+            return Node(NodeKind.WEB_SET, value={"key": "font", "expr": self.parse_expression()}, line=line)
+        raise EppSyntaxError("Try: set background to \"blue\" or set text color to \"white\"", line)
+
+    def parse_web_add_from_kind(self, line: int) -> Node:
+        kind = self.advance().value
+        if kind in {"line"}:
+            kind = "divider"
+        if kind == "divider":
+            return Node(NodeKind.WEB_ADD, value={"kind": "divider"}, line=line)
+        if kind == "link":
+            text = self.parse_value()
+            self.expect_keyword("to")
+            url = self.parse_value()
+            return Node(NodeKind.WEB_ADD, value={"kind": "link", "text": text, "url": url}, line=line)
+        if kind == "button":
+            label = self.parse_value()
+            url = None
+            if self.match_keyword("that"):
+                self.expect_keyword("goes")
+                self.expect_keyword("to")
+                url = self.parse_value()
+            return Node(NodeKind.WEB_ADD, value={"kind": "button", "label": label, "url": url}, line=line)
+        if kind == "input":
+            self.expect_keyword("called")
+            if self.current().type == TokenType.STRING:
+                name_node = self.parse_value()
+                name = None
+            else:
+                name = self._expect_ident()
+                name_node = None
+            placeholder = None
+            if self.match_keyword("with"):
+                placeholder = self.parse_value()
+            value = {"kind": "input", "name": name, "placeholder": placeholder}
+            if name_node:
+                value["name_expr"] = name_node
+            return Node(NodeKind.WEB_ADD, value=value, line=line)
+        if kind == "list":
+            self.expect_keyword("with")
+            items = self.parse_list_or_single()
+            return Node(NodeKind.WEB_ADD, value={"kind": "list", "items": items}, line=line)
+        if kind in {"image", "picture"}:
+            src = self.parse_value()
+            return Node(NodeKind.WEB_ADD, value={"kind": "image", "src": src}, line=line)
+        if kind == "heading":
+            text = self.parse_value()
+            level = 1
+            if self.match_keyword("as"):
+                level_node = self.parse_value()
+                return Node(
+                    NodeKind.WEB_ADD,
+                    value={"kind": "heading", "text": text, "level": level_node},
+                    line=line,
+                )
+            return Node(NodeKind.WEB_ADD, value={"kind": "heading", "text": text, "level": level}, line=line)
+        content = self.parse_value()
+        mapped = "paragraph" if kind == "text" else kind
+        return Node(NodeKind.WEB_ADD, value={"kind": mapped, "text": content}, line=line)
+
+    def parse_web_add_list(self, line: int) -> Node:
+        self.expect_keyword("with")
+        items = self.parse_list_or_single()
+        return Node(NodeKind.WEB_ADD, value={"kind": "list", "items": items}, line=line)
+
+    def parse_web_save(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("save")
+        if not (self.match_keyword("website") or self.match_keyword("page")):
+            if not self.match_keyword("as"):
+                self.expect_keyword("to")
+        elif not self.match_keyword("to"):
+            self.expect_keyword("as")
+        path = self.parse_value()
+        return Node(NodeKind.WEB_SAVE, value=path, line=line)
+
+    def parse_web_open(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("open")
+        if not self.match_keyword("website"):
+            self.match_keyword("page")
+        return Node(NodeKind.WEB_OPEN, line=line)
+
         line = self.current().line
         self.expect_keyword("add")
         item = self.parse_value()

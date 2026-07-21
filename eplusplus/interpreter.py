@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .builtins import eval_builtin
 from .errors import EppRuntimeError, EppSyntaxError
+from .web import WebBuilder
 from .parser import Node, NodeKind, parse
 
 
@@ -80,6 +81,7 @@ class Interpreter:
         base_path: Path | None = None,
         loaded_files: set[str] | None = None,
         is_module: bool = False,
+        open_website: bool = False,
     ) -> None:
         self.env = env or Environment()
         self.input_fn = input_fn
@@ -88,6 +90,8 @@ class Interpreter:
         self.loaded_files = loaded_files if loaded_files is not None else set()
         self.is_module = is_module
         self.shared_names: set[str] = set()
+        self.web: WebBuilder | None = None
+        self.open_website = open_website
 
     def run(self, source: str) -> None:
         try:
@@ -166,6 +170,80 @@ class Interpreter:
 
         if kind == NodeKind.BREAK:
             raise BreakSignal()
+
+        if kind == NodeKind.WEB_START:
+            if self.web is None:
+                self.web = WebBuilder()
+            title = str(self.eval_expr(node.value))
+            self.web.start(title)
+            self.output_fn(f"Website started: {title}")
+            return
+
+        if kind == NodeKind.WEB_SET:
+            self._require_web(node.line)
+            key = node.value["key"]
+            value = str(self.eval_expr(node.value["expr"]))
+            if key == "background":
+                self.web.set_background(value)
+            elif key == "text_color":
+                self.web.set_text_color(value)
+            elif key == "font":
+                self.web.set_font(value)
+            return
+
+        if kind == NodeKind.WEB_ADD:
+            self._require_web(node.line)
+            data = node.value
+            kind_name = data["kind"]
+            if kind_name == "divider":
+                self.web.add_divider()
+            elif kind_name == "heading":
+                level = data.get("level", 1)
+                level_val = int(self._num(self.eval_expr(level), node.line)) if isinstance(level, Node) else int(level)
+                self.web.add_heading(str(self.eval_expr(data["text"])), level_val)
+            elif kind_name == "paragraph":
+                self.web.add_paragraph(str(self.eval_expr(data["text"])))
+            elif kind_name == "button":
+                url = str(self.eval_expr(data["url"])) if data.get("url") else None
+                self.web.add_button(str(self.eval_expr(data["label"])), url)
+            elif kind_name == "link":
+                self.web.add_link(str(self.eval_expr(data["text"])), str(self.eval_expr(data["url"])))
+            elif kind_name == "image":
+                self.web.add_image(str(self.eval_expr(data["src"])))
+            elif kind_name == "list":
+                self.web.add_list(self.eval_expr(data["items"]))
+            elif kind_name == "input":
+                ph = data.get("placeholder")
+                placeholder = str(self.eval_expr(ph)) if ph else None
+                if data.get("name_expr"):
+                    label = str(self.eval_expr(data["name_expr"]))
+                else:
+                    label = data["name"]
+                self.web.add_input(label, placeholder or label)
+            return
+
+        if kind == NodeKind.WEB_SAVE:
+            self._require_web(node.line)
+            rel = str(self.eval_expr(node.value))
+            path = (self.base_path / rel).resolve()
+            saved = self.web.save(path)
+            self.output_fn(f"Website saved to: {saved}")
+            if self.open_website:
+                self.web.open_in_browser()
+            return
+
+        if kind == NodeKind.WEB_OPEN:
+            self._require_web(node.line)
+            if not self.web.saved_path:
+                default = (self.base_path / "my_website.html").resolve()
+                self.web.save(default)
+                self.output_fn(f"Website saved to: {default}")
+            try:
+                self.web.open_in_browser()
+                self.output_fn("Opening in your browser...")
+            except Exception as exc:
+                self.output_fn(f"Open this file in your browser: {self.web.saved_path}")
+            return
 
         if kind == NodeKind.RETURN:
             raise ReturnSignal(self.eval_expr(node.value))
@@ -286,6 +364,12 @@ class Interpreter:
             except BreakSignal:
                 return True
         return False
+
+    def _require_web(self, line: int | None) -> WebBuilder:
+        if self.web is None:
+            self.web = WebBuilder()
+            self.web.start("My E++ Website")
+        return self.web
 
     def execute_import(self, node: Node) -> None:
         rel_path = node.value

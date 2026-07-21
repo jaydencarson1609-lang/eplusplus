@@ -1,0 +1,27 @@
+# Build a website with plain English!
+# Run: python3 epp.py examples/website.epp --open
+
+make website "Jim's Awesome Site"
+
+set background to "skyblue"
+set text color to "white"
+set font to "comic"
+
+add heading "Welcome to my website!"
+add paragraph "I built this whole page using E++ English code."
+add text "No HTML needed — just plain English."
+
+add divider
+
+add heading "Cool stuff I like" as 2
+add list with "Coding", "Games", "Music", "E++"
+
+add picture "https://picsum.photos/600/300"
+add button "Click me!" that goes to "https://www.google.com"
+add link "Visit GitHub" to "https://github.com"
+
+add input called "Your name" with "Type your name..."
+add button "Say hi!"
+
+save website as "my_website.html"
+open website

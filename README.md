@@ -93,6 +93,59 @@ Double-click **`install.bat`** for a quick setup check.
 
 ---
 
+## Build a website (plain English!)
+
+Write a real website — E++ turns your English into HTML.
+
+**Step 1 — Run the example**
+
+```bash
+python3 epp.py examples/website.epp --open
+```
+
+**Step 2 — Write your own** (save as `my_site.epp`):
+
+```epp
+make website "My Cool Site"
+
+set background to "skyblue"
+set text color to "white"
+
+add heading "Welcome!"
+add paragraph "I built this with E++ English code."
+add button "Click me!" that goes to "https://google.com"
+add picture "https://picsum.photos/500/300"
+add list with "Games", "Coding", "Music"
+
+save website as "my_website.html"
+open website
+```
+
+That's it — open `my_website.html` in your browser!
+
+### All website commands
+
+| English | What it does |
+|---------|----------------|
+| `make website "Title"` | Start a new page |
+| `set background to "blue"` | Page background color |
+| `set text color to "white"` | Text color |
+| `set font to "comic"` | Font (comic, arial, mono…) |
+| `add heading "Hello!"` | Big title |
+| `add paragraph "..."` | Normal text |
+| `add text "..."` | Same as paragraph |
+| `add button "Click me!"` | Button |
+| `add button "Go" that goes to "https://..."` | Button with link |
+| `add link "Google" to "https://google.com"` | Clickable link |
+| `add picture "url"` | Image |
+| `add list with "a", "b", "c"` | Bullet list |
+| `add input called "Your name"` | Text box |
+| `add divider` | Horizontal line |
+| `save website as "page.html"` | Save your site |
+| `open website` | Open in browser |
+
+---
+
 ## All functions
 
 ### Variables

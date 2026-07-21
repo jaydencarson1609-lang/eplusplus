@@ -66,6 +66,20 @@
     "body": ["give back ${1:value}"],
     "description": "Return a value from a recipe"
   },
+  "Make website": {
+    "prefix": "make website",
+    "body": [
+      "make website \"${1:My Site}\"",
+      "",
+      "set background to \"skyblue\"",
+      "add heading \"${2:Welcome!}\"",
+      "add paragraph \"${3:Built with E++!}\"",
+      "",
+      "save website as \"my_website.html\"",
+      "open website"
+    ],
+    "description": "Start a website in plain English"
+  },
   "Recipe / Function": {
     "prefix": "to",
     "body": [

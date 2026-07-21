@@ -18,14 +18,15 @@ def main() -> int:
     parser.add_argument("file", nargs="?", help="Path to a .epp script")
     parser.add_argument("-e", "--eval", dest="code", help="Run E++ code from the command line")
     parser.add_argument("--repl", action="store_true", help="Start an interactive E++ shell")
-    parser.add_argument("--version", action="version", version="E++ 0.5.0")
+    parser.add_argument("--open", action="store_true", help="Open the website in your browser after saving")
+    parser.add_argument("--version", action="version", version="E++ 0.6.0")
     args = parser.parse_args()
 
     base_path = Path.cwd()
     if args.file:
         base_path = Path(args.file).resolve().parent
 
-    interpreter = Interpreter(base_path=base_path)
+    interpreter = Interpreter(base_path=base_path, open_website=args.open)
 
     if args.repl:
         return repl(interpreter)
