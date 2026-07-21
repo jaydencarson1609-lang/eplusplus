@@ -1,169 +1,58 @@
 # E++ (English++)
 
-**Write code in plain English.** E++ is your own programming language — made for kids, beginners, and anyone who wants coding to feel like talking.
+Write code in plain English.
 
 ```epp
 name is called "Jim"
 Age is "14"
-
 say "Hello!"
-when Age is greater than 10 then
-    say "Jim is a teenager!"
-done
-```
-
-## Quick start (30 seconds)
-
-```bash
-cd ~/Projects/eplusplus
-python3 epp.py examples/kids/adventure.epp
-python3 epp.py examples/import_demo.epp
-```
-
-### New E++ file (example.epp)
-
-In VS Code, with the `eplusplus` folder open:
-
-1. Press **`Cmd+Shift+P`** (Mac) or **`Ctrl+Shift+P`** (Windows)
-2. Type **`E++: New example.epp File`** and press Enter
-3. It creates `example.epp` (or `example2.epp`, `example3.epp`, …) from a starter template
-4. Press **`Cmd+Shift+B`** to run it
-
-New blank tabs also use **E++ colors** automatically (workspace setting).
-
-When you **Save As**, name the file something ending in **`.epp`** — for example `my_game.epp`.
-
-Or install everything (shortcut command + VS Code icon & colors):
-
-```bash
-chmod +x install.sh
-./install.sh
+show name
 ```
 
 ---
 
-## Share E++ with friends
+## Install
 
-You do **not** need a GitHub **Page** (website). You need a GitHub **repository** (a folder online friends can download).
-
-### Step 1 — Put your project on GitHub
-
-1. Go to [github.com/new](https://github.com/new)
-2. Name it something like `eplusplus`
-3. Create the repo
-4. In Terminal, from your project folder:
+### 1. Download
 
 ```bash
-cd ~/Projects/eplusplus
-git add .
-git commit -m "My E++ language"
-git remote add origin https://github.com/YOUR_USERNAME/eplusplus.git
-git push -u origin main
-```
-
-### Step 2 — Friends install it
-
-Your friends run:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/eplusplus.git
+git clone https://github.com/jaydencarson1609-lang/eplusplus.git
 cd eplusplus
+```
+
+### 2. Install (one time)
+
+```bash
 chmod +x install.sh
 ./install.sh
 ```
 
-Then open the folder in VS Code and run any `.epp` file.
+This adds the `epp` command and the VS Code extension (colors, snippets, run button).
 
-### Step 3 — Friends import your scripts
+### 3. Run a script
 
-Put shared code in a folder, for example `examples/libs/` or `stdlib/`:
-
-```epp
-use "stdlib/math.epp"
-bring in "examples/libs/player.epp"
+```bash
+python3 epp.py example.epp
 ```
 
-If a file is on GitHub inside the repo, the path is the same after they clone it.
+Or with the shortcut:
 
-To share **your own** recipes, add `share` in the library file:
-
-```epp
-share my_helper
-
-to my_helper name do
-    give back "Hello " plus name
-done
+```bash
+epp example.epp
 ```
 
-### GitHub Page? (optional)
+### 4. VS Code (optional)
 
-A **GitHub Page** is only if you want a **website** (like a landing page or online docs). It is **not required** for imports or for friends to use E++.
+1. Open the `eplusplus` folder in VS Code
+2. Open any `.epp` file
+3. Press **`Cmd+Shift+B`** (Mac) or **`Ctrl+Shift+B`** (Windows) to run
+4. Or press **`Cmd+Shift+P`** → **E++: New example.epp File** to start a new script
 
 ---
 
-## Use E++ in Visual Studio Code
+## All functions
 
-This is the best way to use your language — colored code, snippets, and a **Run** button.
-
-### Step 1 — Open the project
-
-1. Open **Visual Studio Code** (or **Cursor** — same steps)
-2. **File → Open Folder…**
-3. Choose: `~/Projects/eplusplus`
-
-### Step 2 — Install the E++ extension (one time)
-
-**Easy way** — run the install script (does this for you):
-
-```bash
-./install.sh
-```
-
-**Manual way** — in a terminal:
-
-```bash
-code --install-extension ~/Projects/eplusplus/vscode-extension
-```
-
-For Cursor, use `cursor` instead of `code`.
-
-### Step 3 — Open a `.epp` file
-
-1. Open `examples/kids/adventure.epp`
-2. You should see:
-   - The **E++ icon** on `.epp` files in the file explorer
-   - **Colorful syntax** (keywords, strings, comments)
-   - Language mode **E++** in the bottom-right corner
-
-### Step 4 — Run your code
-
-Pick any of these:
-
-| Method | How |
-|--------|-----|
-| **Play button** | Click ▶ in the top-right when a `.epp` file is open |
-| **Keyboard** | `Cmd+Shift+B` (Mac) or `Ctrl+Shift+B` (Windows) |
-| **Terminal** | `python3 epp.py yourfile.epp` |
-| **Command Palette** | `Cmd+Shift+P` → **E++: Run Current File** |
-
-### Step 5 — Use snippets (type & Tab)
-
-In a `.epp` file, type one of these and press **Tab**:
-
-- `say` → print a message
-- `let` → make a variable
-- `when` → if/else block
-- `repeat` → loop
-- `ask` → ask the user a question
-- `list` → make a list
-- `object` → make a JSON-like object
-- `to` → create a recipe (function)
-
----
-
-## Language guide (kid friendly)
-
-### Variables — many English ways
+### Variables
 
 ```epp
 name is called "Jim"
@@ -173,40 +62,56 @@ set lives to 3
 colors is "red", "blue", "green"
 ```
 
-### Talk & show
+### Print
 
 ```epp
 say "Hello!"
-tell "Same thing!"
+tell "Hello!"
 show name
 show score plus 10
 ```
 
-### Ask the player (input)
+### Input
 
 ```epp
 ask name with "What is your name?"
-show name
 ```
 
-### Lists (like JSON `[...]`)
+### Math
 
 ```epp
-colors is "red", "blue", "green"
-show first item in colors
-show last item in colors
-show item 2 of colors
+show 10 plus 5
+show 20 minus 3
+show 4 times 6
+show 10 divided by 2
+show name plus " is cool"
 ```
 
-### Objects (like JSON `{...}`)
+### Compare
 
 ```epp
-player has name "Jim" and score 100 and alive yes
-show name of player
-show score of player
+when age is equal to 14 then
+    say "Exactly 14!"
+done
+
+when age is not equal to 10 then
+    say "Not 10!"
+done
+
+when age is greater than 10 then
+    say "Big!"
+done
+
+when age is less than 20 then
+    say "Small!"
+done
+
+when ready is yes and score is greater than 0 then
+    say "Go!"
+done
 ```
 
-### If / when
+### If / else
 
 ```epp
 when age is greater than 10 then
@@ -216,7 +121,7 @@ otherwise
 done
 ```
 
-Also works: `if ... then ... else ... end`
+Also works: `if ... then ... else ... end` / `done`
 
 ### Loops
 
@@ -229,9 +134,34 @@ while score is less than 100 do
     make score equal to score plus 10
 done
 
+until score is greater than 99 do
+    make score equal to score plus 10
+done
+
 for each color in colors do
     say color
 done
+
+keep going while lives is greater than 0 do
+    say "Still playing!"
+done
+```
+
+### Lists
+
+```epp
+colors is "red", "blue", "green"
+show first item in colors
+show last item in colors
+show item 2 of colors
+```
+
+### Objects
+
+```epp
+player has name "Jim" and score 100 and alive yes
+show name of player
+show score of player
 ```
 
 ### Recipes (functions)
@@ -244,28 +174,7 @@ done
 run greet with "Jim"
 ```
 
-### Math
-
-```epp
-show 10 plus 5
-show 20 minus 3
-show 4 times 6
-show 10 divided by 2
-```
-
-### Compare
-
-```epp
-when age is equal to 14 then
-    say "Exactly 14!"
-done
-
-when name is not equal to "Bob" then
-    say "Not Bob!"
-done
-```
-
-### Recipes (functions) with return values
+Return a value:
 
 ```epp
 to add a and b do
@@ -275,28 +184,14 @@ done
 show run add with 10 and 5
 ```
 
-### Import other scripts (build your language library)
+### Import
 
 ```epp
 use "stdlib/math.epp"
-bring in "examples/libs/player.epp"
+import "myfile.epp"
+bring in "myfile.epp"
+use script from "myfile.epp"
 
-show run add with 10 and 5
-show run make_greeting with "Jim"
-```
-
-Ways to import:
-
-| English | Meaning |
-|---------|---------|
-| `use "file.epp"` | Load another script |
-| `bring in "file.epp"` | Same thing, natural English |
-| `import "file.epp"` | Same thing |
-| `use script from "file.epp"` | Same thing, extra English |
-
-In the file you import, mark what to share:
-
-```epp
 share add and make_greeting
 
 to add a and b do
@@ -304,20 +199,21 @@ to add a and b do
 done
 ```
 
-If you skip `share`, everything in that file becomes available.
-
-Built-in library (in `stdlib/`):
-
-- `stdlib/math.epp` — add, subtract, multiply, divide, double
-- `stdlib/text.epp` — make_greeting, make_loud, join_words
-
 ### Wait
 
 ```epp
 wait 2 seconds
+wait 1 minute
 ```
 
-### Yes / No (true / false)
+### Comments
+
+```epp
+# line comment
+note: this is also a comment
+```
+
+### Yes / no
 
 ```epp
 let ready be yes
@@ -328,47 +224,48 @@ done
 
 ---
 
-## All the English words E++ understands
+## Built-in library (stdlib)
 
-| Idea | Words you can use |
-|------|-------------------|
+Import with `use "stdlib/math.epp"` or `use "stdlib/text.epp"`.
+
+### stdlib/math.epp
+
+| Recipe | What it does | Example |
+|--------|--------------|---------|
+| `add` | Add two numbers | `show run add with 10 and 5` |
+| `subtract` | Subtract | `show run subtract with 10 and 3` |
+| `multiply` | Multiply | `show run multiply with 4 and 6` |
+| `divide` | Divide | `show run divide with 20 and 4` |
+| `double` | Double a number | `show run double with 7` |
+
+### stdlib/text.epp
+
+| Recipe | What it does | Example |
+|--------|--------------|---------|
+| `make_greeting` | Hello message | `show run make_greeting with "Jim"` |
+| `make_loud` | Adds `!!!` | `show run make_loud with "Wow"` |
+| `join_words` | Join with a space | `show run join_words with "Hello" and "world"` |
+
+---
+
+## All English words E++ understands
+
+| Idea | Words |
+|------|-------|
 | Print | `say`, `tell`, `speak`, `print` |
-| Show value | `show`, `display` |
+| Show | `show`, `display`, `write` |
 | If | `if`, `when` |
 | Else | `else`, `otherwise` |
-| End block | `end`, `done`, `finish` |
-| Set variable | `is`, `is called`, `let ... be`, `make ... equal to`, `set ... to` |
-| And / Or | `and`, `or`, `not` |
-| Loop | `repeat`, `while`, `until`, `for each` |
-| Function | `to ... do`, `run ... with`, `give back` |
+| End block | `end`, `done`, `finish`, `stop` |
+| Variables | `is`, `is called`, `let ... be`, `make ... equal to`, `set ... to` |
+| Logic | `and`, `or`, `not` |
+| Loops | `repeat`, `while`, `until`, `for each`, `keep going while` |
+| Functions | `to ... do`, `run ... with`, `give back` |
 | Import | `use`, `bring in`, `import`, `share` |
-| Object | `has ... and ...` |
-| List item | `first item in`, `last item in`, `item 2 of` |
-
----
-
-## Project layout
-
-```
-eplusplus/
-  eplusplus/           # language engine
-  epp.py               # run scripts
-  install.sh           # one-click setup
-  vscode-extension/    # VS Code icon, colors, snippets, play button
-  examples/kids/       # fun starter scripts
-  examples/libs/       # your own importable libraries
-  stdlib/              # built-in E++ modules
-```
-
----
-
-## What's next?
-
-This is **your** language — v0.3. Ideas to add later:
-
-- Web version (run in browser)
-- Draw graphics (`draw a red circle`)
-- More stdlib modules (games, colors, random)
-- More JSON helpers
-
-Made with E++ — English++ 🚀
+| Objects | `has ... and ...`, `name of player` |
+| Lists | `first item in`, `last item in`, `item 2 of` |
+| Math | `plus`, `minus`, `times`, `divided by` |
+| Compare | `is equal to`, `is not equal to`, `is greater than`, `is less than` |
+| Input | `ask ... with` |
+| Wait | `wait`, `pause` |
+| True/false | `yes`, `no`, `true`, `false` |
