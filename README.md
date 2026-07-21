@@ -128,15 +128,44 @@ show 10 plus 5
 show 20 minus 3
 show 4 times 6
 show 10 divided by 2
+show 10 modulo 3
 show name plus " is cool"
 ```
 
-### Text
+### More math (like Lua `math.*`)
+
+```epp
+show floor of 3.9
+show ceiling of 3.1
+show round of 3.6
+show absolute of neg
+show square root of 16
+show remainder of 10 and 3
+show power of 2 and 8
+show smallest of 10 and 5
+show largest of 10 and 5
+```
+
+### Text (like Lua `string.*`)
 
 ```epp
 show length of name
+show count of name
 show uppercase of name
 show lowercase of name
+show slice of name from 1 to 3
+show find "lo" in hello
+show replace "cat" with "dog" in text
+show split "a,b,c" by ","
+show join parts with "-"
+show trimmed of "  hi  "
+show copy of "ha" 3 times
+when starts with "He" in name then
+    say "Yes!"
+done
+when ends with "!" in msg then
+    say "Ends with !"
+done
 ```
 
 ### Random
@@ -146,7 +175,15 @@ show choose number between 1 and 10
 show pick random item in colors
 ```
 
-### Lists
+### Type & convert (like Lua `type`, `tonumber`, `tostring`)
+
+```epp
+show type of name
+show number from "99"
+show text from 42
+```
+
+### Lists (like Lua `table.*`)
 
 ```epp
 colors is "red", "blue", "green"
@@ -154,6 +191,11 @@ show first item in colors
 show last item in colors
 show item 2 of colors
 add "gold" to colors
+remove "red" from colors
+remove item 2 from colors
+sort colors
+reverse colors
+show join colors with ", "
 when "red" is in colors then
     say "Found red!"
 done
@@ -212,6 +254,16 @@ done
 
 for each color in colors do
     say color
+done
+
+for i from 1 to 10 do
+    say i
+done
+
+repeat 100 times
+    when score is 10 then
+        break loop
+    done
 done
 
 keep going while lives is greater than 0 do
@@ -329,14 +381,16 @@ Import with `use "stdlib/math.epp"` etc.
 | End block | `end`, `done`, `finish`, `stop` |
 | Variables | `is`, `is called`, `let ... be`, `make ... equal to`, `set ... to` |
 | Logic | `and`, `or`, `not` |
-| Loops | `repeat`, `while`, `until`, `for each`, `keep going while` |
+| Loops | `repeat`, `while`, `until`, `for each`, `for i from 1 to 10`, `break loop` |
 | Functions | `to ... do`, `run ... with`, `give back` |
 | Import | `use`, `bring in`, `import`, `share` |
 | Objects | `has ... and ...`, `name of player` |
-| Lists | `first item in`, `last item in`, `item 2 of`, `add ... to` |
-| Text | `length of`, `uppercase of`, `lowercase of` |
+| Lists | `sort`, `reverse`, `remove`, `join ... with`, `add ... to`, `first/last item in` |
+| Text | `slice`, `find`, `replace`, `split`, `trimmed`, `copy`, `starts/ends with` |
+| Math extra | `floor`, `ceiling`, `round`, `absolute`, `sqrt`, `power`, `modulo`, `min`, `max` |
+| Type | `type of`, `number from`, `text from` |
 | Random | `choose number between`, `pick random item in` |
-| Math | `plus`, `minus`, `times`, `divided by` |
+| Math | `plus`, `minus`, `times`, `divided by`, `modulo` |
 | Compare | `is equal to`, `is not equal to`, `is greater than`, `is less than`, `is in` |
 | Input | `ask ... with` |
 | Wait | `wait`, `pause` |

@@ -5,6 +5,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .builtins import eval_builtin
 from .errors import EppRuntimeError, EppSyntaxError
 from .parser import Node, NodeKind, parse
 
@@ -13,6 +14,10 @@ class ReturnSignal(Exception):
     def __init__(self, value: object) -> None:
         self.value = value
         super().__init__()
+
+
+class BreakSignal(Exception):
+    pass
 
 
 @dataclass
@@ -120,11 +125,47 @@ class Interpreter:
             target = node.value["target"]
             item = self.eval_expr(node.value["item"])
             current = self.env.get(target, node.line)
-            items = self._as_list(current, node.line)
-            items = list(items)
+            items = list(self._as_list(current, node.line))
             items.append(item)
             self.env.set(target, items)
             return
+
+        if kind == NodeKind.REMOVE:
+            name = node.value["name"]
+            current = list(self._as_list(self.env.get(name, node.line), node.line))
+            if node.value["mode"] == "index":
+                index = int(self._num(self.eval_expr(node.value["value"]), node.line))
+                if index == -1:
+                    index = len(current)
+                if index < 1 or index > len(current):
+                    raise EppRuntimeError(f"List item #{index} does not exist.", node.line)
+                current.pop(index - 1)
+            else:
+                item = self.eval_expr(node.value["value"])
+                if item in current:
+                    current.remove(item)
+                else:
+                    for i, v in enumerate(current):
+                        if str(v) == str(item):
+                            current.pop(i)
+                            break
+            self.env.set(name, current)
+            return
+
+        if kind == NodeKind.SORT:
+            current = list(self._as_list(self.env.get(node.value, node.line), node.line))
+            current.sort(key=lambda v: str(v))
+            self.env.set(node.value, current)
+            return
+
+        if kind == NodeKind.REVERSE:
+            current = list(self._as_list(self.env.get(node.value, node.line), node.line))
+            current.reverse()
+            self.env.set(node.value, current)
+            return
+
+        if kind == NodeKind.BREAK:
+            raise BreakSignal()
 
         if kind == NodeKind.RETURN:
             raise ReturnSignal(self.eval_expr(node.value))
@@ -172,31 +213,31 @@ class Interpreter:
 
         if kind == NodeKind.IF:
             if self.is_truthy(self.eval_expr(node.value["condition"])):
-                for stmt in node.children or []:
-                    self.execute(stmt)
+                if self._run_block(node.children or []):
+                    raise BreakSignal()
             elif node.value["else"]:
-                for stmt in node.value["else"]:
-                    self.execute(stmt)
+                if self._run_block(node.value["else"]):
+                    raise BreakSignal()
             return
 
         if kind == NodeKind.REPEAT:
             count_value = self.eval_expr(node.value)
             count = int(self._num(count_value, node.line))
             for _ in range(max(0, count)):
-                for stmt in node.children or []:
-                    self.execute(stmt)
+                if self._run_block(node.children or []):
+                    break
             return
 
         if kind == NodeKind.WHILE:
             while self.is_truthy(self.eval_expr(node.value)):
-                for stmt in node.children or []:
-                    self.execute(stmt)
+                if self._run_block(node.children or []):
+                    break
             return
 
         if kind == NodeKind.UNTIL:
             while not self.is_truthy(self.eval_expr(node.value)):
-                for stmt in node.children or []:
-                    self.execute(stmt)
+                if self._run_block(node.children or []):
+                    break
             return
 
         if kind == NodeKind.FOR_EACH:
@@ -205,8 +246,21 @@ class Interpreter:
             items = self._as_list(iterable, node.line)
             for item in items:
                 self.env.set(var_name, item)
-                for stmt in node.children or []:
-                    self.execute(stmt)
+                if self._run_block(node.children or []):
+                    break
+            return
+
+        if kind == NodeKind.FOR_RANGE:
+            var_name = node.value["var"]
+            start = int(self._num(self.eval_expr(node.value["start"]), node.line))
+            end = int(self._num(self.eval_expr(node.value["end"]), node.line))
+            step = 1 if start <= end else -1
+            value = start
+            while (step > 0 and value <= end) or (step < 0 and value >= end):
+                self.env.set(var_name, value)
+                if self._run_block(node.children or []):
+                    break
+                value += step
             return
 
         if kind == NodeKind.FUNCTION:
@@ -223,6 +277,15 @@ class Interpreter:
             return
 
         raise EppRuntimeError("Something went wrong running the program (unknown step).", node.line)
+
+    def _run_block(self, statements: list[Node]) -> bool:
+        """Run statements. Returns True if loop should break."""
+        for stmt in statements:
+            try:
+                self.execute(stmt)
+            except BreakSignal:
+                return True
+        return False
 
     def execute_import(self, node: Node) -> None:
         rel_path = node.value
@@ -380,6 +443,9 @@ class Interpreter:
                 raise EppRuntimeError("Can't pick from an empty list.", node.line)
             return random.choice(items)
 
+        if kind == NodeKind.BUILTIN:
+            return eval_builtin(self, node)
+
         if kind == NodeKind.RANDOM:
             low = int(self._num(self.eval_expr(node.value["low"]), node.line))
             high = int(self._num(self.eval_expr(node.value["high"]), node.line))
@@ -403,6 +469,11 @@ class Interpreter:
                 if divisor == 0:
                     raise EppRuntimeError("You can't divide by zero!", node.line)
                 return self._num(left, node.line) / divisor
+            if op == "%":
+                divisor = self._num(right, node.line)
+                if divisor == 0:
+                    raise EppRuntimeError("You can't modulo by zero!", node.line)
+                return int(self._num(left, node.line)) % int(divisor)
             if op == "==":
                 return self._compare_equal(left, right)
             if op == "!=":

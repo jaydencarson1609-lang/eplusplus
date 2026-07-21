@@ -38,6 +38,12 @@ class NodeKind(Enum):
     CLEAR = auto()
     RANDOM = auto()
     PICK = auto()
+    BUILTIN = auto()
+    FOR_RANGE = auto()
+    BREAK = auto()
+    REMOVE = auto()
+    SORT = auto()
+    REVERSE = auto()
 
 
 @dataclass
@@ -81,6 +87,21 @@ BLOCK_STARTERS = {
     "choose",
     "between",
     "contains",
+    "remove",
+    "sort",
+    "reverse",
+    "break",
+    "exit",
+    "floor",
+    "slice",
+    "join",
+    "split",
+    "find",
+    "replace",
+    "copy",
+    "type",
+    "text",
+    "count",
 }
 
 
@@ -144,7 +165,7 @@ class Parser:
             if kw == "until":
                 return self.parse_until()
             if kw == "for":
-                return self.parse_for_each()
+                return self.parse_for()
             if kw == "to":
                 return self.parse_function()
             if kw == "run":
@@ -163,6 +184,14 @@ class Parser:
                 return self.parse_clear()
             if kw == "add":
                 return self.parse_append()
+            if kw == "remove":
+                return self.parse_remove()
+            if kw == "sort":
+                return self.parse_sort()
+            if kw == "reverse":
+                return self.parse_reverse()
+            if kw == "break":
+                return self.parse_break()
             if kw == "ask":
                 return self.parse_ask()
             if kw == "wait":
@@ -365,6 +394,59 @@ class Parser:
         body = self.parse_block()
         self.expect_keyword("end")
         return Node(NodeKind.UNTIL, value=condition, children=body, line=line)
+
+    def parse_for(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("for")
+        if self.match_keyword("each"):
+            self.skip_the()
+            var = self.advance().value
+            self.expect_keyword("in")
+            self.skip_the()
+            iterable = self.parse_expression()
+            self.expect_keyword("do")
+            body = self.parse_block()
+            self.expect_keyword("end")
+            return Node(NodeKind.FOR_EACH, value={"var": var, "iterable": iterable}, children=body, line=line)
+
+        var = self.advance().value
+        self.expect_keyword("from")
+        start = self.parse_addition()
+        self.expect_keyword("to")
+        end = self.parse_addition()
+        self.expect_keyword("do")
+        body = self.parse_block()
+        self.expect_keyword("end")
+        return Node(NodeKind.FOR_RANGE, value={"var": var, "start": start, "end": end}, children=body, line=line)
+
+    def parse_break(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("break")
+        self.expect_keyword("loop")
+        return Node(NodeKind.BREAK, line=line)
+
+    def parse_remove(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("remove")
+        if self.match_keyword("item"):
+            target = {"mode": "index", "value": self.parse_primary()}
+        else:
+            target = {"mode": "value", "value": self.parse_value()}
+        self.expect_keyword("from")
+        name = self._expect_ident()
+        return Node(NodeKind.REMOVE, value={"name": name, **target}, line=line)
+
+    def parse_sort(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("sort")
+        name = self._expect_ident()
+        return Node(NodeKind.SORT, value=name, line=line)
+
+    def parse_reverse(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("reverse")
+        name = self._expect_ident()
+        return Node(NodeKind.REVERSE, value=name, line=line)
 
     def parse_for_each(self) -> Node:
         line = self.current().line
@@ -610,6 +692,10 @@ class Parser:
                 self.expect_keyword("by")
                 right = self.parse_postfix()
                 node = Node(NodeKind.BINOP, value="/", left=node, right=right, line=token.line)
+            elif token.type == TokenType.KEYWORD and token.value in {"remainder", "modulo"}:
+                self.advance()
+                right = self.parse_postfix()
+                node = Node(NodeKind.BINOP, value="%", left=node, right=right, line=token.line)
             else:
                 break
         return node
@@ -704,6 +790,10 @@ class Parser:
         ):
             return self.parse_random_number()
 
+        builtin = self.parse_lua_builtins()
+        if builtin is not None:
+            return builtin
+
         token = self.current()
         if token.type == TokenType.STRING:
             self.advance()
@@ -724,6 +814,127 @@ class Parser:
             expr = self.parse_primary()
             return Node(NodeKind.UNOP, value="not", left=expr, line=line)
         raise EppSyntaxError(f"I need a value here, not '{token.value}'.", token.line)
+
+    def _builtin(self, op: str, args: list[Node], line: int) -> Node:
+        return Node(NodeKind.BUILTIN, value={"op": op, "args": args}, line=line)
+
+    def parse_lua_builtins(self) -> Node | None:
+        line = self.current().line
+
+        if self.current().type == TokenType.KEYWORD and self.current().value == "number":
+            if (
+                self._peek_type(1) == TokenType.KEYWORD
+                and self.tokens[self.pos + 1].value == "from"
+            ):
+                self.advance()
+                self.expect_keyword("from")
+                arg = self.parse_primary()
+                return self._builtin("number_from", [arg], line)
+
+        if self.current().type == TokenType.KEYWORD and self.current().value == "text":
+            if (
+                self._peek_type(1) == TokenType.KEYWORD
+                and self.tokens[self.pos + 1].value == "from"
+            ):
+                self.advance()
+                self.expect_keyword("from")
+                arg = self.parse_primary()
+                return self._builtin("text_from", [arg], line)
+
+        for op in ("floor", "ceiling", "round", "absolute"):
+            if self.match_keyword(op):
+                self.expect_keyword("of")
+                self.skip_the()
+                arg = self.parse_primary()
+                mapped = "ceiling" if op == "ceiling" else op
+                return self._builtin(mapped, [arg], line)
+
+        if self.match_keyword("square"):
+            self.expect_keyword("root")
+            self.expect_keyword("of")
+            self.skip_the()
+            arg = self.parse_primary()
+            return self._builtin("sqrt", [arg], line)
+
+        if self.match_keyword("type"):
+            self.expect_keyword("of")
+            self.skip_the()
+            arg = self.parse_primary()
+            return self._builtin("type", [arg], line)
+
+        if self.match_keyword("trim"):
+            self.expect_keyword("of")
+            self.skip_the()
+            arg = self.parse_primary()
+            return self._builtin("trim", [arg], line)
+
+        for op in ("remainder", "power", "smallest", "largest"):
+            if self.match_keyword(op):
+                self.expect_keyword("of")
+                self.skip_the()
+                left = self.parse_addition()
+                self.expect_keyword("and")
+                right = self.parse_addition()
+                return self._builtin(op, [left, right], line)
+
+        if self.match_keyword("slice"):
+            self.expect_keyword("of")
+            self.skip_the()
+            target = self.parse_primary()
+            self.expect_keyword("from")
+            start = self.parse_addition()
+            self.expect_keyword("to")
+            end = self.parse_addition()
+            return self._builtin("slice", [target, start, end], line)
+
+        if self.match_keyword("find"):
+            needle = self.parse_value()
+            self.expect_keyword("in")
+            haystack = self.parse_primary()
+            return self._builtin("find", [needle, haystack], line)
+
+        if self.match_keyword("replace"):
+            old = self.parse_value()
+            self.expect_keyword("with")
+            new = self.parse_value()
+            self.expect_keyword("in")
+            text = self.parse_primary()
+            return self._builtin("replace", [old, new, text], line)
+
+        if self.match_keyword("split"):
+            text = self.parse_primary()
+            self.expect_keyword("by")
+            sep = self.parse_value()
+            return self._builtin("split", [text, sep], line)
+
+        if self.match_keyword("join"):
+            items = self.parse_primary()
+            self.expect_keyword("with")
+            sep = self.parse_value()
+            return self._builtin("join", [items, sep], line)
+
+        if self.match_keyword("copy"):
+            self.expect_keyword("of")
+            text = self.parse_value()
+            count = self.parse_primary()
+            self.expect_keyword("times")
+            return self._builtin("copy", [text, count], line)
+
+        if self.match_keyword("starts"):
+            self.expect_keyword("with")
+            prefix = self.parse_value()
+            self.expect_keyword("in")
+            text = self.parse_primary()
+            return self._builtin("starts_with", [prefix, text], line)
+
+        if self.match_keyword("ends"):
+            self.expect_keyword("with")
+            suffix = self.parse_value()
+            self.expect_keyword("in")
+            text = self.parse_primary()
+            return self._builtin("ends_with", [suffix, text], line)
+
+        return None
 
 
 def parse(source: str) -> Node:
