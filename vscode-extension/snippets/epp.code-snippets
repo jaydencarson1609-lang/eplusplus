@@ -1,0 +1,89 @@
+{
+  "Say Hello": {
+    "prefix": "say",
+    "body": ["say \"${1:Hello!}\""],
+    "description": "Print a message"
+  },
+  "Let variable": {
+    "prefix": "let",
+    "body": ["let ${1:name} be \"${2:value}\""],
+    "description": "Create a variable (easy way)"
+  },
+  "Name is called": {
+    "prefix": "is called",
+    "body": ["${1:name} is called \"${2:Jim}\""],
+    "description": "Create a variable with natural English"
+  },
+  "When / If": {
+    "prefix": "when",
+    "body": [
+      "when ${1:age} is greater than ${2:10} then",
+      "\t${3:say \"You are a big kid!\"}",
+      "otherwise",
+      "\t${4:say \"Still growing!\"}",
+      "done"
+    ],
+    "description": "If / else block (kid friendly)"
+  },
+  "Repeat loop": {
+    "prefix": "repeat",
+    "body": [
+      "repeat ${1:5} times",
+      "\t${2:say \"Fun!\"}",
+      "done"
+    ],
+    "description": "Repeat something many times"
+  },
+  "Ask question": {
+    "prefix": "ask",
+    "body": ["ask ${1:name} with \"${2:What is your name?}\""],
+    "description": "Ask the user a question"
+  },
+  "Make a list": {
+    "prefix": "list",
+    "body": ["${1:colors} is \"${2:red}\", \"${3:blue}\", \"${4:green}\""],
+    "description": "Create a list (like JSON array)"
+  },
+  "Make an object": {
+    "prefix": "object",
+    "body": [
+      "${1:player} has name \"${2:Jim}\" and score ${3:100}"
+    ],
+    "description": "Create an object (like JSON)"
+  },
+  "Import script": {
+    "prefix": "use",
+    "body": ["use \"${1:stdlib/math.epp}\""],
+    "description": "Import another E++ script"
+  },
+  "Share from library": {
+    "prefix": "share",
+    "body": ["share ${1:name} and ${2:other}"],
+    "description": "Mark recipes to share when this file is imported"
+  },
+  "Give back value": {
+    "prefix": "give back",
+    "body": ["give back ${1:value}"],
+    "description": "Return a value from a recipe"
+  },
+  "Recipe / Function": {
+    "prefix": "to",
+    "body": [
+      "to ${1:greet} ${2:someone} do",
+      "\tsay \"Hello \" plus ${2:someone}",
+      "done",
+      "",
+      "run ${1:greet} with \"${3:Jim}\""
+    ],
+    "description": "Define and run a recipe (function)"
+  },
+  "For each": {
+    "prefix": "for each",
+    "body": [
+      "for each ${1:color} in ${2:colors} do",
+      "\tsay ${1:color}",
+      "done"
+    ],
+    "description": "Loop through a list"
+  }
+}

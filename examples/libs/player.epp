@@ -1,0 +1,18 @@
+# Your own E++ library — import this from other scripts!
+# Example: bring in "examples/libs/player.epp"
+
+use "stdlib/text.epp"
+
+share describe and player_level
+
+to describe someone do
+    give back run make_greeting with someone
+done
+
+to player_level age do
+    when age is greater than 12 then
+        give back "teen"
+    otherwise
+        give back "kid"
+    done
+done

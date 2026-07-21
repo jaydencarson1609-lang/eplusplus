@@ -1,0 +1,47 @@
+# E++ for Kids — a fun adventure game starter!
+# Save this file and press the Play button in VS Code (or run: python3 epp.py examples/kids/adventure.epp)
+
+say "Welcome to E++ Adventure!"
+say "You write code in plain English. Cool, right?"
+
+let hero_name be "Alex"
+let hero_age be 12
+let coins be 0
+
+player has name "Alex" and level 1 and hp 100
+
+say "Your hero is ready!"
+show name of player
+show hp of player
+
+colors is "red", "blue", "green", "gold"
+say "Magic colors in your bag:"
+for each color in colors do
+    say color
+done
+
+say "First color:"
+show first item in colors
+say "Last color:"
+show last item in colors
+
+when hero_age is greater than 10 then
+    say "You are old enough for the quest!"
+otherwise
+    say "Maybe next year!"
+done
+
+repeat 3 times
+    make coins equal to coins plus 10
+    say "Found 10 coins!"
+done
+
+show coins
+
+to celebrate do
+    say "You win! Great job coding in English!"
+done
+
+run celebrate
+
+note: try changing hero_name, adding more colors, or making your own recipe with 'to ... do ... done'

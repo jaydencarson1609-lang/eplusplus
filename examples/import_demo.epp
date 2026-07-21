@@ -1,0 +1,24 @@
+# Import other E++ scripts — build your own language library!
+
+say "Welcome to E++ imports!"
+say "You can write recipes in one file and use them in another."
+
+use "stdlib/math.epp"
+use "stdlib/text.epp"
+
+say "Math from stdlib/math.epp:"
+show run add with 10 and 5
+show run multiply with 4 and 6
+show run double with 7
+
+say "Text from stdlib/text.epp:"
+show run make_greeting with "Jim"
+show run make_loud with "E++ is awesome"
+
+say "Your own local library:"
+bring in "examples/libs/player.epp"
+
+show run describe with "Jim"
+show run player_level with 14
+
+# try writing your own file in examples/libs/ and import it with use "examples/libs/yourfile.epp"

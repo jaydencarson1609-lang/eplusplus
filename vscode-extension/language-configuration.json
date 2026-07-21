@@ -1,0 +1,40 @@
+{
+  "comments": {
+    "lineComment": "#",
+    "blockComment": [
+      "note:",
+      ""
+    ]
+  },
+  "brackets": [
+    [
+      "then",
+      "done"
+    ],
+    [
+      "then",
+      "end"
+    ],
+    [
+      "do",
+      "done"
+    ],
+    [
+      "do",
+      "end"
+    ]
+  ],
+  "autoClosingPairs": [
+    {
+      "open": "\"",
+      "close": "\""
+    }
+  ],
+  "surroundingPairs": [
+    [
+      "\"",
+      "\""
+    ]
+  ],
+  "wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)"
+}

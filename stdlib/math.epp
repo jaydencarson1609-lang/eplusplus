@@ -1,0 +1,24 @@
+# E++ standard library — math recipes
+# Import with: use "stdlib/math.epp"
+
+share add and subtract and multiply and divide and double
+
+to add a and b do
+    give back a plus b
+done
+
+to subtract a and b do
+    give back a minus b
+done
+
+to multiply a and b do
+    give back a times b
+done
+
+to divide a and b do
+    give back a divided by b
+done
+
+to double number do
+    give back run multiply with number and 2
+done

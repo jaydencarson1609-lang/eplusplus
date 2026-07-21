@@ -1,0 +1,66 @@
+# E++ Cheat Sheet for Kids
+# Open this file in VS Code to see colors and try snippets (type a word and press Tab)
+
+# --- VARIABLES (3 easy ways) ---
+name is called "Jim"
+let age be 14
+make score equal to 100
+set lives to 3
+
+# --- TALK TO THE COMPUTER ---
+say "Hello, world!"
+tell "Same as say!"
+show name
+show score plus 10
+
+# --- ASK THE PLAYER ---
+ask pet_name with "What is your pet's name?"
+say "Nice pet: "
+show pet_name
+
+# --- LISTS (like JSON arrays) ---
+fruits is "apple", "banana", "cherry"
+show fruits
+show first item in fruits
+show item 2 of fruits
+
+# --- OBJECTS (like JSON objects) ---
+friend has name "Sam" and age 11 and likes_pizza yes
+show name of friend
+show age of friend
+
+# --- IF / WHEN ---
+when age is greater than 13 then
+    say "Teenager!"
+otherwise
+    say "Still a kid!"
+done
+
+# --- LOOPS ---
+repeat 5 times
+    say "Jump!"
+done
+
+while coins is less than 50 do
+    make coins equal to coins plus 5
+done
+
+for each fruit in fruits do
+    say fruit
+done
+
+# --- RECIPES (functions) ---
+to say_hi person do
+    say "Hi " plus person plus "!"
+done
+
+run say_hi with "Maya"
+
+# --- WAIT ---
+wait 1 second
+
+# --- TRUE / FALSE ---
+let game_over be no
+when game_over is yes then
+    say "Game over!"
+done

@@ -1,0 +1,15 @@
+# E++ standard library — text helpers
+
+share make_greeting and make_loud and join_words
+
+to make_greeting someone do
+    give back "Hello " plus someone plus "!"
+done
+
+to make_loud message do
+    give back message plus "!!!"
+done
+
+to join_words words and more do
+    give back words plus " " plus more
+done

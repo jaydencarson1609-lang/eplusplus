@@ -1,0 +1,64 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "E++",
+  "scopeName": "source.epp",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#keywords"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.epp",
+          "match": "#.*$"
+        },
+        {
+          "name": "comment.line.note.epp",
+          "match": "(?i)\\bnote:.*$"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.epp",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.epp",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.epp",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.epp",
+          "match": "(?i)\\b(if|when|then|else|otherwise|end|done|finish|repeat|while|until|for|each|do|keep|going)\\b"
+        },
+        {
+          "name": "keyword.other.epp",
+          "match": "(?i)\\b(say|tell|speak|print|show|ask|wait|pause|to|run|call|with|let|make|set|has|note|use|import|bring|share|give|back|load|from)\\b"
+        },
+        {
+          "name": "keyword.operator.epp",
+          "match": "(?i)\\b(is|called|are|be|plus|minus|times|divided|by|greater|than|less|equal|to|not|and|or|of|in|first|last|item|true|false|yes|no)\\b"
+        }
+      ]
+    }
+  }
+}

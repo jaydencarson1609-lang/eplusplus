@@ -1,0 +1,98 @@
+{
+  "name": "eplusplus",
+  "displayName": "E++ (English++)",
+  "description": "Syntax highlighting, snippets, and run button for E++ — code in plain English for kids and beginners.",
+  "version": "0.3.0",
+  "publisher": "eplusplus",
+  "icon": "icons/epp.svg",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "e++",
+    "english",
+    "kids",
+    "education",
+    "epp"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "epp",
+        "aliases": [
+          "E++",
+          "English++",
+          "epp"
+        ],
+        "extensions": [
+          ".epp"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/epp.svg",
+          "dark": "./icons/epp.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "epp",
+        "scopeName": "source.epp",
+        "path": "./syntaxes/epp.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "epp",
+        "path": "./snippets/epp.code-snippets"
+      }
+    ],
+    "commands": [
+      {
+        "command": "epp.runFile",
+        "title": "E++: Run Current File",
+        "icon": "$(play)"
+      },
+      {
+        "command": "epp.newFile",
+        "title": "E++: New example.epp File",
+        "icon": "$(new-file)"
+      }
+    ],
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "epp.runFile",
+          "when": "resourceLangId == epp",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "epp.runFile",
+          "when": "resourceLangId == epp"
+        },
+        {
+          "command": "epp.newFile"
+        }
+      ]
+    },
+    "taskDefinitions": [
+      {
+        "type": "epp",
+        "required": [],
+        "properties": {}
+      }
+    ]
+  },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:epp",
+    "onCommand:epp.runFile",
+    "onCommand:epp.newFile"
+  ]
+}

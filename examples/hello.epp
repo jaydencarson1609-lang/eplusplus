@@ -1,0 +1,15 @@
+say "Welcome to E++!"
+say "English++ — code that reads like English."
+
+note: you can leave notes like this anywhere in your script
+
+x is 10
+y is 5
+show x plus y
+show x times y
+
+if x is greater than y then
+    say "x wins"
+else
+    say "y wins"
+end

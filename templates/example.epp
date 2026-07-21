@@ -1,0 +1,17 @@
+# My E++ script — write in plain English!
+# Press Cmd+Shift+B (Mac) or Ctrl+Shift+B (Windows) to run
+
+name is called "Jim"
+Age is "14"
+
+say "Hello!"
+show name
+show Age
+
+when Age is greater than 10 then
+    say "Nice to meet you, " plus name
+done
+
+# Import built-in recipes (optional):
+# use "stdlib/math.epp"
+# show run add with 10 and 5

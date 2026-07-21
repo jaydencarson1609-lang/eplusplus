@@ -1,0 +1,22 @@
+# Your first E++ script — write code in plain English!
+
+name is called "Jim"
+Age is "14"
+
+say "Hello!"
+show name
+show Age
+
+if Age is greater than 10 then
+    say "Jim is a teenager"
+end
+
+repeat 3 times
+    say "Nice to meet you"
+end
+
+score is 100 minus 14
+show score
+
+greeting is name plus " is " plus Age plus " years old"
+show greeting
