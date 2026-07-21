@@ -1,0 +1,17 @@
+# E++ standard library — random helpers
+# Import with: use "stdlib/random.epp"
+
+share coin_flip and dice_roll and lucky_number
+
+to coin_flip do
+    sides is "heads", "tails"
+    give back pick random item in sides
+done
+
+to dice_roll do
+    give back choose number between 1 and 6
+done
+
+to lucky_number do
+    give back choose number between 1 and 100
+done

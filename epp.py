@@ -18,7 +18,7 @@ def main() -> int:
     parser.add_argument("file", nargs="?", help="Path to a .epp script")
     parser.add_argument("-e", "--eval", dest="code", help="Run E++ code from the command line")
     parser.add_argument("--repl", action="store_true", help="Start an interactive E++ shell")
-    parser.add_argument("--version", action="version", version="E++ 0.3.0")
+    parser.add_argument("--version", action="version", version="E++ 0.4.0")
     args = parser.parse_args()
 
     base_path = Path.cwd()

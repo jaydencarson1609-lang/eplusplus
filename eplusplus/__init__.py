@@ -4,4 +4,4 @@ from .interpreter import Interpreter
 from .errors import EppError, EppRuntimeError, EppSyntaxError
 
 __all__ = ["Interpreter", "EppError", "EppRuntimeError", "EppSyntaxError"]
-__version__ = "0.3.0"
+__version__ = "0.4.0"

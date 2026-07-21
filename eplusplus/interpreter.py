@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -109,6 +110,20 @@ class Interpreter:
         if kind == NodeKind.SHARE:
             for name in node.value:
                 self.shared_names.add(name.lower())
+            return
+
+        if kind == NodeKind.CLEAR:
+            self.output_fn("\033[2J\033[H", end="")
+            return
+
+        if kind == NodeKind.APPEND:
+            target = node.value["target"]
+            item = self.eval_expr(node.value["item"])
+            current = self.env.get(target, node.line)
+            items = self._as_list(current, node.line)
+            items = list(items)
+            items.append(item)
+            self.env.set(target, items)
             return
 
         if kind == NodeKind.RETURN:
@@ -351,7 +366,26 @@ class Interpreter:
         if kind == NodeKind.UNOP:
             if node.value == "not":
                 return not self.is_truthy(self.eval_expr(node.left))
+            if node.value == "length":
+                return self._length(self.eval_expr(node.left), node.line)
+            if node.value == "uppercase":
+                return str(self.eval_expr(node.left)).upper()
+            if node.value == "lowercase":
+                return str(self.eval_expr(node.left)).lower()
             raise EppRuntimeError(f"Unknown operator '{node.value}'.", node.line)
+
+        if kind == NodeKind.PICK:
+            items = self._as_list(self.eval_expr(node.value), node.line)
+            if not items:
+                raise EppRuntimeError("Can't pick from an empty list.", node.line)
+            return random.choice(items)
+
+        if kind == NodeKind.RANDOM:
+            low = int(self._num(self.eval_expr(node.value["low"]), node.line))
+            high = int(self._num(self.eval_expr(node.value["high"]), node.line))
+            if low > high:
+                low, high = high, low
+            return random.randint(low, high)
 
         if kind == NodeKind.BINOP:
             op = node.value
@@ -381,9 +415,27 @@ class Interpreter:
                 return self.is_truthy(left) and self.is_truthy(right)
             if op == "or":
                 return self.is_truthy(left) or self.is_truthy(right)
+            if op == "in":
+                return self._contains(right, left, node.line)
             raise EppRuntimeError(f"Unknown operator '{op}'.", node.line)
 
         raise EppRuntimeError("I couldn't figure out this value.", node.line)
+
+    @staticmethod
+    def _length(value: object, line: int | None) -> int:
+        if isinstance(value, str):
+            return len(value)
+        if isinstance(value, list):
+            return len(value)
+        raise EppRuntimeError("length of only works on text or lists.", line)
+
+    @staticmethod
+    def _contains(container: object, item: object, line: int | None) -> bool:
+        if isinstance(container, list):
+            return item in container or str(item) in [str(x) for x in container]
+        if isinstance(container, str):
+            return str(item) in container
+        raise EppRuntimeError("'is in' only works with lists or text.", line)
 
     @staticmethod
     def _as_list(value: object, line: int | None) -> list[object]:

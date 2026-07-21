@@ -1,17 +1,21 @@
 # My E++ script — write in plain English!
-# Press Cmd+Shift+B (Mac) or Ctrl+Shift+B (Windows) to run
+# Mac: Cmd+Shift+B to run   |   Windows: Ctrl+Shift+B
 
 name is called "Jim"
 Age is "14"
 
 say "Hello!"
 show name
-show Age
+show length of name
+show uppercase of name
 
 when Age is greater than 10 then
     say "Nice to meet you, " plus name
 done
 
-# Import built-in recipes (optional):
+show choose number between 1 and 10
+
+# Import extra recipes (optional):
 # use "stdlib/math.epp"
-# show run add with 10 and 5
+# use "stdlib/random.epp"
+# show run dice_roll

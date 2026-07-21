@@ -34,6 +34,10 @@ class NodeKind(Enum):
     OBJECT = auto()
     MEMBER = auto()
     INDEX = auto()
+    APPEND = auto()
+    CLEAR = auto()
+    RANDOM = auto()
+    PICK = auto()
 
 
 @dataclass
@@ -69,6 +73,14 @@ BLOCK_STARTERS = {
     "import",
     "share",
     "give",
+    "clear",
+    "length",
+    "uppercase",
+    "lowercase",
+    "pick",
+    "choose",
+    "between",
+    "contains",
 }
 
 
@@ -147,6 +159,10 @@ class Parser:
                 return self.parse_share()
             if kw == "give":
                 return self.parse_return()
+            if kw == "clear":
+                return self.parse_clear()
+            if kw == "add":
+                return self.parse_append()
             if kw == "ask":
                 return self.parse_ask()
             if kw == "wait":
@@ -406,6 +422,21 @@ class Parser:
             names.append(self._expect_ident())
         return Node(NodeKind.SHARE, value=names, line=line)
 
+    def parse_clear(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("clear")
+        self.skip_the()
+        self.expect_keyword("screen")
+        return Node(NodeKind.CLEAR, line=line)
+
+    def parse_append(self) -> Node:
+        line = self.current().line
+        self.expect_keyword("add")
+        item = self.parse_value()
+        self.expect_keyword("to")
+        target = self._expect_ident()
+        return Node(NodeKind.APPEND, value={"target": target, "item": item}, line=line)
+
     def parse_return(self) -> Node:
         line = self.current().line
         self.expect_keyword("give")
@@ -546,6 +577,8 @@ class Parser:
             return "<"
         if self.match_keyword("called"):
             raise EppSyntaxError("'is called' is only for making variables, not for comparing.", line)
+        if self.match_keyword("in"):
+            return "in"
         return "=="
 
     def parse_addition(self) -> Node:
@@ -597,6 +630,20 @@ class Parser:
             break
         return node
 
+    def parse_random_number(self) -> Node:
+        line = self.current().line
+        if self.match_keyword("choose"):
+            pass
+        elif self.match_keyword("random"):
+            pass
+        if self.current().type == TokenType.KEYWORD and self.current().value == "number":
+            self.advance()
+        self.expect_keyword("between")
+        low = self.parse_addition()
+        self.expect_keyword("and")
+        high = self.parse_addition()
+        return Node(NodeKind.RANDOM, value={"low": low, "high": high}, line=line)
+
     def parse_primary(self) -> Node:
         self.skip_the()
 
@@ -623,6 +670,39 @@ class Parser:
 
         if self.current().type == TokenType.KEYWORD and self.current().value == "run":
             return self._parse_call()
+
+        if self.match_keyword("length"):
+            self.expect_keyword("of")
+            self.skip_the()
+            target = self.parse_primary()
+            return Node(NodeKind.UNOP, value="length", left=target, line=target.line)
+
+        if self.match_keyword("uppercase"):
+            self.expect_keyword("of")
+            self.skip_the()
+            target = self.parse_primary()
+            return Node(NodeKind.UNOP, value="uppercase", left=target, line=target.line)
+
+        if self.match_keyword("lowercase"):
+            self.expect_keyword("of")
+            self.skip_the()
+            target = self.parse_primary()
+            return Node(NodeKind.UNOP, value="lowercase", left=target, line=target.line)
+
+        if self.match_keyword("pick"):
+            self.expect_keyword("random")
+            self.expect_keyword("item")
+            self.expect_keyword("in")
+            self.skip_the()
+            lst = self.parse_primary()
+            return Node(NodeKind.PICK, value=lst, line=lst.line)
+
+        if self.match_keyword("choose") or (
+            self.current().type == TokenType.KEYWORD and self.current().value == "random"
+            and self._peek_type(1) == TokenType.KEYWORD
+            and self.tokens[self.pos + 1].value == "number"
+        ):
+            return self.parse_random_number()
 
         token = self.current()
         if token.type == TokenType.STRING:

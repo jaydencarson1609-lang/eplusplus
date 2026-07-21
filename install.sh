@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install E++ and the VS Code extension on your Mac
+# Install E++ and the VS Code extension (Mac / Linux)
 
 set -euo pipefail
 
@@ -58,5 +58,5 @@ echo ""
 echo "Done! Next steps:"
 echo "  1. Open this folder in VS Code or Cursor: $ROOT"
 echo "  2. Open examples/kids/adventure.epp"
-echo "  3. Press Cmd+Shift+B to run (or click the Play button)"
+echo "  3. Press Cmd+Shift+B (Mac) or Ctrl+Shift+B (Windows) to run"
 echo "  4. Or run: python3 epp.py examples/kids/adventure.epp"

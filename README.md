@@ -4,49 +4,92 @@ Write code in plain English.
 
 ```epp
 name is called "Jim"
-Age is "14"
 say "Hello!"
 show name
 ```
+
+**GitHub:** https://github.com/jaydencarson1609-lang/eplusplus
 
 ---
 
 ## Install
 
-### 1. Download
+You only need **Python** (free). That’s it.
+
+### Mac
+
+**Step 1 — Get the project**
+
+Open **Terminal** and paste:
 
 ```bash
 git clone https://github.com/jaydencarson1609-lang/eplusplus.git
 cd eplusplus
 ```
 
-### 2. Install (one time)
+No git? Click the green **Code** button on GitHub → **Download ZIP** → unzip → open the folder in Terminal.
+
+**Step 2 — Try it**
+
+```bash
+python3 epp.py example.epp
+```
+
+You should see output in the terminal. Done!
+
+**Step 3 — Easy install (optional)**
 
 ```bash
 chmod +x install.sh
 ./install.sh
 ```
 
-This adds the `epp` command and the VS Code extension (colors, snippets, run button).
+This adds colors in VS Code and the `epp` shortcut command.
 
-### 3. Run a script
+**Step 4 — VS Code (optional)**
 
-```bash
-python3 epp.py example.epp
+1. Open the `eplusplus` folder in [VS Code](https://code.visualstudio.com/)
+2. Open `example.epp`
+3. Press **`Cmd+Shift+B`** to run
+
+---
+
+### Windows
+
+**Step 1 — Install Python (one time)**
+
+1. Go to https://www.python.org/downloads/
+2. Click **Download Python**
+3. Run the installer
+4. **Important:** check ✅ **Add python.exe to PATH**
+5. Click **Install Now**
+
+**Step 2 — Get the project**
+
+Open **Command Prompt** and paste:
+
+```cmd
+git clone https://github.com/jaydencarson1609-lang/eplusplus.git
+cd eplusplus
 ```
 
-Or with the shortcut:
+No git? Click the green **Code** button on GitHub → **Download ZIP** → unzip → open that folder in Command Prompt.
 
-```bash
-epp example.epp
+**Step 3 — Try it**
+
+```cmd
+python epp.py example.epp
 ```
 
-### 4. VS Code (optional)
+You should see output. Done!
 
-1. Open the `eplusplus` folder in VS Code
-2. Open any `.epp` file
-3. Press **`Cmd+Shift+B`** (Mac) or **`Ctrl+Shift+B`** (Windows) to run
-4. Or press **`Cmd+Shift+P`** → **E++: New example.epp File** to start a new script
+**Step 4 — VS Code (optional)**
+
+1. Open the `eplusplus` folder in [VS Code](https://code.visualstudio.com/)
+2. Open `example.epp`
+3. Press **`Ctrl+Shift+B`** to run
+
+Double-click **`install.bat`** for a quick setup check.
 
 ---
 
@@ -69,6 +112,7 @@ say "Hello!"
 tell "Hello!"
 show name
 show score plus 10
+clear screen
 ```
 
 ### Input
@@ -85,6 +129,34 @@ show 20 minus 3
 show 4 times 6
 show 10 divided by 2
 show name plus " is cool"
+```
+
+### Text
+
+```epp
+show length of name
+show uppercase of name
+show lowercase of name
+```
+
+### Random
+
+```epp
+show choose number between 1 and 10
+show pick random item in colors
+```
+
+### Lists
+
+```epp
+colors is "red", "blue", "green"
+show first item in colors
+show last item in colors
+show item 2 of colors
+add "gold" to colors
+when "red" is in colors then
+    say "Found red!"
+done
 ```
 
 ### Compare
@@ -147,15 +219,6 @@ keep going while lives is greater than 0 do
 done
 ```
 
-### Lists
-
-```epp
-colors is "red", "blue", "green"
-show first item in colors
-show last item in colors
-show item 2 of colors
-```
-
 ### Objects
 
 ```epp
@@ -190,7 +253,6 @@ show run add with 10 and 5
 use "stdlib/math.epp"
 import "myfile.epp"
 bring in "myfile.epp"
-use script from "myfile.epp"
 
 share add and make_greeting
 
@@ -210,7 +272,6 @@ wait 1 minute
 
 ```epp
 # line comment
-note: this is also a comment
 ```
 
 ### Yes / no
@@ -226,25 +287,33 @@ done
 
 ## Built-in library (stdlib)
 
-Import with `use "stdlib/math.epp"` or `use "stdlib/text.epp"`.
+Import with `use "stdlib/math.epp"` etc.
 
 ### stdlib/math.epp
 
-| Recipe | What it does | Example |
-|--------|--------------|---------|
-| `add` | Add two numbers | `show run add with 10 and 5` |
-| `subtract` | Subtract | `show run subtract with 10 and 3` |
-| `multiply` | Multiply | `show run multiply with 4 and 6` |
-| `divide` | Divide | `show run divide with 20 and 4` |
-| `double` | Double a number | `show run double with 7` |
+| Recipe | Example |
+|--------|---------|
+| `add` | `show run add with 10 and 5` |
+| `subtract` | `show run subtract with 10 and 3` |
+| `multiply` | `show run multiply with 4 and 6` |
+| `divide` | `show run divide with 20 and 4` |
+| `double` | `show run double with 7` |
 
 ### stdlib/text.epp
 
-| Recipe | What it does | Example |
-|--------|--------------|---------|
-| `make_greeting` | Hello message | `show run make_greeting with "Jim"` |
-| `make_loud` | Adds `!!!` | `show run make_loud with "Wow"` |
-| `join_words` | Join with a space | `show run join_words with "Hello" and "world"` |
+| Recipe | Example |
+|--------|---------|
+| `make_greeting` | `show run make_greeting with "Jim"` |
+| `make_loud` | `show run make_loud with "Wow"` |
+| `join_words` | `show run join_words with "Hello" and "world"` |
+
+### stdlib/random.epp
+
+| Recipe | Example |
+|--------|---------|
+| `coin_flip` | `show run coin_flip` |
+| `dice_roll` | `show run dice_roll` |
+| `lucky_number` | `show run lucky_number` |
 
 ---
 
@@ -254,6 +323,7 @@ Import with `use "stdlib/math.epp"` or `use "stdlib/text.epp"`.
 |------|-------|
 | Print | `say`, `tell`, `speak`, `print` |
 | Show | `show`, `display`, `write` |
+| Clear | `clear screen` |
 | If | `if`, `when` |
 | Else | `else`, `otherwise` |
 | End block | `end`, `done`, `finish`, `stop` |
@@ -263,9 +333,11 @@ Import with `use "stdlib/math.epp"` or `use "stdlib/text.epp"`.
 | Functions | `to ... do`, `run ... with`, `give back` |
 | Import | `use`, `bring in`, `import`, `share` |
 | Objects | `has ... and ...`, `name of player` |
-| Lists | `first item in`, `last item in`, `item 2 of` |
+| Lists | `first item in`, `last item in`, `item 2 of`, `add ... to` |
+| Text | `length of`, `uppercase of`, `lowercase of` |
+| Random | `choose number between`, `pick random item in` |
 | Math | `plus`, `minus`, `times`, `divided by` |
-| Compare | `is equal to`, `is not equal to`, `is greater than`, `is less than` |
+| Compare | `is equal to`, `is not equal to`, `is greater than`, `is less than`, `is in` |
 | Input | `ask ... with` |
 | Wait | `wait`, `pause` |
 | True/false | `yes`, `no`, `true`, `false` |
